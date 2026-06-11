@@ -5,7 +5,17 @@ const app = express();
 app.use(express.urlencoded({ extended: true }));
 
 const ADMIN_PASSWORD = "12345";
-const db = new sqlite3.Database("C:/OCR/saida/vitoria_sc.db");
+const path = require("path");
+const fs = require("fs");
+
+const dbPath = path.join(__dirname, "vitoria_sc.db");
+
+console.log("__dirname:", __dirname);
+console.log("ficheiros:", fs.readdirSync(__dirname));
+console.log("dbPath:", dbPath);
+console.log("existe db?", fs.existsSync(dbPath));
+
+const db = new sqlite3.Database(dbPath);
 
 app.use("/imagens", express.static("C:/OCR/imagens_processadas"));
 
