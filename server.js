@@ -17,7 +17,10 @@ console.log("existe db?", fs.existsSync(dbPath));
 
 const db = new sqlite3.Database(dbPath);
 
-app.use("/imagens", express.static("C:/OCR/imagens_processadas"));
+app.use(
+  "/imagens",
+  express.static(path.join(__dirname, "imagens_processadas"))
+);
 
 function adicionarColuna(nome, tipo) {
   db.run(`ALTER TABLE inscricoes ADD COLUMN ${nome} ${tipo}`, () => {});
@@ -143,16 +146,13 @@ function mostrarAdmin(res, pesquisa = "", estado = "") {
 
   if (pesquisa.trim() !== "") {
     sql += `
-      AND (
-        LOWER(nome_completo) LIKE LOWER(?)
-        OR LOWER(socio_proposto) LIKE LOWER(?)
-        OR LOWER(proponente) LIKE LOWER(?)
-        OR LOWER(concelho) LIKE LOWER(?)
-        OR LOWER(distrito) LIKE LOWER(?)
-        OR LOWER(nome_ficheiro) LIKE LOWER(?)
-        OR LOWER(ficheiro_processado) LIKE LOWER(?)
-        OR LOWER(ficheiro_original) LIKE LOWER(?)
-      )
+  AND (
+  LOWER(nome_completo) LIKE LOWER(?)
+  OR LOWER(proponente) LIKE LOWER(?)
+  OR LOWER(concelho) LIKE LOWER(?)
+  OR LOWER(distrito) LIKE LOWER(?)
+  OR LOWER(nome_ficheiro) LIKE LOWER(?)
+)
     `;
 
     const termo = `%${pesquisa}%`;
@@ -402,7 +402,9 @@ function escapeHtml(text) {
     .replace(/'/g, "&#039;");
 }
 
-app.listen(3000, () => {
-  console.log("Servidor iniciado em http://localhost:3000");
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Servidor iniciado na porta ${PORT}`);
 });
 
